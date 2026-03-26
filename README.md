@@ -1,45 +1,56 @@
 # Premium Task Tracker
 
-A full-stack, aesthetically pleasing, modern Task Tracker application built with the MERN stack (MongoDB, Express, React, Node.js). 
-It features a premium dark theme UI with glassmorphic elements, full authentication, and comprehensive task management capabilities.
+A full-stack, aesthetically pleasing, modern Task Tracker application built from scratch with the MERN stack (MongoDB, Express, React, Node.js). 
 
-## Features
-- **Authentication**: Secure JWT-based login and registration.
-- **Task Management**: Create, Read, Update, and Delete tasks.
-- **Advanced Filtering**: Filter tasks by Status or Priority, search by title, sort by date, and paginate through results.
-- **Analytics**: Real-time visual metrics showing total tasks, pending, and completed tasks.
-- **Responsive UI**: Fully responsive on desktop, tablet, and mobile devices.
-- **Premium Aesthetics**: Using Vanilla CSS with custom CSS variables, glassmorphic panels, fine-tuned shadows, and micro-animations.
+## 🎨 Design Choices & Architecture
+- **Glassmorphism UI:** Built gracefully with pure, Vanilla CSS, featuring frosted glass panels (`backdrop-filter: blur`), glowing primary color accents, and smooth micro-animations to create a highly premium user feel.
+- **Serverless-Optimized Backend:** The Express.js backend features a specialized database connection handler mapping requests to MongoDB Atlas exclusively *after* ensuring a stable connection. This was specifically built to prevent cold-start buffering timeout issues on Vercel Serverless Functions.
+- **Dynamic Client-Side Routing:** Managed by React Router DOM, cleanly dividing authenticated dashboard screens from public authorization flows.
+- **State & Auth Management:** Context API is used to manage global user state. JSON Web Tokens (JWT) are securely attached automatically to every outgoing Axios request using robust interceptors.
 
-## Prerequisites
-- Node.js (v18 or higher recommended)
-- MongoDB instance (local or MongoDB Atlas)
+## 🚀 Setup & Local Deployment
 
-## Setup Instructions
+### 1. Database & Environment Setup
+Ensure you have a MongoDB cluster running (either local or Atlas). 
+Create a `.env` file in the `backend` folder:
+```text
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret_key
+```
 
-### 1. Database Configuration
-Make sure your MongoDB server is running. By default, the app expects MongoDB on `mongodb://localhost:27017/task_tracker`. 
-You can change this in the backend `.env` file if needed.
-
-### 2. Backend Setup
+### 2. Run the Backend Server
 Navigate to the `backend` folder:
 ```bash
 cd backend
 npm install
 npm run dev
 ```
-*(Note: Since you might not have configured `"dev": "nodemon server.js"` in package.json yet, you can run `npx nodemon server.js` or `node server.js` instead if the script is missing).*
 
-### 3. Frontend Setup
+### 3. Run the Frontend App
 Navigate to the `frontend` folder from a new terminal:
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
-The Vite development server will start on `http://localhost:5173`. Open this URL in your browser to view the application.
+Open the Vite local URL (usually `http://localhost:5173`) in your browser.
 
-## Technologies Used
-- **Backend**: Node.js, Express, MongoDB, Mongoose, JSON Web Tokens (JWT), Bcrypt.js
-- **Frontend**: React, Vite, React Router, Axios, Lucide React (for icons)
-- **Styling**: Pure Vanilla CSS, CSS Variables, Glassmorphism, Google Fonts ('Outfit')
+## 📡 API Endpoints
+
+### Authentication (`/api/auth`)
+- **`POST /signup`**: Register a new user. Expects `{ name, email, password }`. Returns a JWT token and user profile.
+- **`POST /login`**: Authenticate a user. Expects `{ email, password }`. Returns a JWT token and user profile.
+
+### Tasks (`/api/tasks`)
+*All task routes require a valid Bearer Token in the `Authorization` header.*
+- **`GET /`**: Fetch all tasks for the logged-in user. Supports query parameters for `page`, `limit`, `search`, `status`, `priority`, and `sortby`.
+- **`POST /`**: Create a new task. Expects `{ title, description, status, priority }`.
+- **`PUT /:id`**: Update an existing task by its `_id`. 
+- **`DELETE /:id`**: Delete a task by its `_id`.
+- **`GET /analytics`**: Returns aggregated count metrics grouped by task status (`Pending`, `In Progress`, `Completed`), allowing the frontend to generate live charts.
+
+## 🛠 Technologies Used
+- **Backend:** Node.js, Express.js, MongoDB, Mongoose, JWT, Bcrypt.js
+- **Frontend:** React, Vite, React Router DOM, Axios, Lucide React (Icons)
+- **Deployment:** Configured precisely for seamless Vercel deployment with `vercel.json` rewrites and serverless cold-start optimizations inline.
